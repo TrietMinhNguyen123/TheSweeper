@@ -141,7 +141,7 @@ namespace Platformer.Mechanics
             animator.SetTrigger("attack");
 
             // Wait for animation length or fixed time
-            yield return new WaitForSeconds(0.4f);
+            yield return new WaitForSeconds(0.2f);
 
             isAttack = false;
         }
