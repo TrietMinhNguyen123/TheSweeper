@@ -31,10 +31,6 @@ namespace Platformer.Gameplay
                     player.Bounce(2);
                 }
             }
-            else
-            {
-                Schedule<PlayerDeath>();
-            }
         }
     }
 }
