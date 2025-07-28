@@ -133,7 +133,7 @@ namespace Platformer.Mechanics
 
         void Attack()
         {
-            if (!isAttack)
+            if (!isAttack && health.IsAlive)
             {
                 StartCoroutine(PerformAttack());
             }
@@ -143,8 +143,8 @@ namespace Platformer.Mechanics
         {
 
             // Wait for animation length or fixed time
-            isAttack = true;
             animator.SetTrigger("attack");
+            isAttack = true;
 
 
             Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
