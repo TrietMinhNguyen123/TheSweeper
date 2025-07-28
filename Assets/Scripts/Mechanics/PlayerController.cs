@@ -15,7 +15,6 @@ namespace Platformer.Mechanics
     /// </summary>
     public class PlayerController : KinematicObject
     {
-        private InputAction m_AttackAction;
         public AudioClip jumpAudio;
         public AudioClip respawnAudio;
         public AudioClip ouchAudio;
@@ -35,11 +34,6 @@ namespace Platformer.Mechanics
         /*internal new*/ public AudioSource audioSource;
         public Health health;
         public bool controlEnabled = true;
-        
-        public Transform attackPoint; // Empty GameObject as attack origin
-        public float attackRange = 0.5f;
-        public LayerMask enemyLayers;
-        public int attackDamage = 1;
 
         bool jump;
         Vector2 move;
@@ -62,9 +56,7 @@ namespace Platformer.Mechanics
 
             m_MoveAction = InputSystem.actions.FindAction("Player/Move");
             m_JumpAction = InputSystem.actions.FindAction("Player/Jump");
-            m_AttackAction = InputSystem.actions.FindAction("Player/Attack");
             
-            m_AttackAction.Enable();
             m_MoveAction.Enable();
             m_JumpAction.Enable();
         }
@@ -88,11 +80,6 @@ namespace Platformer.Mechanics
             }
             UpdateJumpState();
             base.Update();
-            
-            if (m_AttackAction.WasPressedThisFrame())
-            {
-                Attack();
-            }
         }
 
         void UpdateJumpState()
@@ -124,28 +111,6 @@ namespace Platformer.Mechanics
                     break;
             }
         }
-        
-        bool isAttack = false;
-
-        void Attack()
-        {
-            if (!isAttack)
-            {
-                StartCoroutine(PerformAttack());
-            }
-        }
-
-        IEnumerator PerformAttack()
-        {
-            isAttack = true;
-            animator.SetTrigger("attack");
-
-            // Wait for animation length or fixed time
-            yield return new WaitForSeconds(0.2f);
-
-            isAttack = false;
-        }
-    
 
         protected override void ComputeVelocity()
         {
@@ -172,7 +137,6 @@ namespace Platformer.Mechanics
             animator.SetFloat("velocityX", Mathf.Abs(velocity.x) / maxSpeed);
 
             targetVelocity = move * maxSpeed;
-
         }
 
         public enum JumpState
