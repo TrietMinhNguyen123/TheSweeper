@@ -53,8 +53,12 @@ namespace Platformer.Gameplay
                 }
             }
 
-            // Re-enable player input after short delay
-            Simulation.Schedule<EnablePlayerInput>(2f);
+			// Re-enable player input after short delay
+			Simulation.Schedule<EnablePlayerInput>(2f);
+
+			// Reset death flag so player can die again
+			PlayerDeath.isProcessingDeath = false;
+
         }
     }
 }

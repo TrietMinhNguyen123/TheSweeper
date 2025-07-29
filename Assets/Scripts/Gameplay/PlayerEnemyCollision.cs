@@ -4,8 +4,10 @@ using Platformer.Model;
 using UnityEngine;
 using static Platformer.Core.Simulation;
 
+
 namespace Platformer.Gameplay
 {
+
 
     /// <summary>
     /// Fired when a Player collides with an Enemy.
@@ -16,31 +18,22 @@ namespace Platformer.Gameplay
         public EnemyController enemy;
         public PlayerController player;
 
+
         PlatformerModel model = Simulation.GetModel<PlatformerModel>();
+
 
         public override void Execute()
         {
             var willHurtEnemy = player.Bounds.center.y >= enemy.Bounds.max.y;
 
+
             if (willHurtEnemy)
             {
-                var enemyHealth = enemy.GetComponent<Health>();
-                if (enemyHealth != null)
+            var enemyHealth = enemy.GetComponent<Health>();
+                if (!enemyHealth.IsAlive)
                 {
-                    enemyHealth.Decrement();
-                    if (!enemyHealth.IsAlive)
-                    {
-                        Schedule<EnemyDeath>().enemy = enemy;
-                        player.Bounce(2);
-                    }
-                    else
-                    {
-                        player.Bounce(7);
-                    }
-                }
-                else
-                {
-                    Schedule<EnemyDeath>().enemy = enemy;
+
+
                     player.Bounce(2);
                 }
             }
@@ -51,13 +44,15 @@ namespace Platformer.Gameplay
 				{
 					sliderObj.value -= sliderObj.maxValue * 0.2f;
 
-					if (sliderObj.value <= 0)
+
+					if (sliderObj.value <= .2)
 					{
 						sliderObj.value = 0;
 						Schedule<PlayerDeath>();
 					}
 				}
 			}
+
 
         }
     }
