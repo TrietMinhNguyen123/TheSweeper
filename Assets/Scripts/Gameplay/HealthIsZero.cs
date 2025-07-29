@@ -1,7 +1,6 @@
 using Platformer.Core;
 using Platformer.Mechanics;
 using static Platformer.Core.Simulation;
-using UnityEngine;
 
 namespace Platformer.Gameplay
 {
@@ -11,22 +10,12 @@ namespace Platformer.Gameplay
     /// </summary>
     /// <typeparam name="HealthIsZero"></typeparam>
     public class HealthIsZero : Simulation.Event<HealthIsZero>
-    {   
+    {
         public Health health;
-      
-       public override void Execute()
-        {
-            if (health.gameObject.CompareTag("Player"))
-            {
-                Schedule<PlayerDeath>();
-            }
-            else if (health.gameObject.CompareTag("Enemy"))
-            {
-                var enemyController = health.GetComponent<EnemyController>();
-                if (enemyController != null)
-                    Schedule<EnemyDeath>().enemy = enemyController;
-            }
-        }
 
+        public override void Execute()
+        {
+            Schedule<PlayerDeath>();
+        }
     }
 }
