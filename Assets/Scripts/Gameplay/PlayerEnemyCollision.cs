@@ -51,7 +51,7 @@ namespace Platformer.Gameplay
 				{
 					sliderObj.value -= sliderObj.maxValue * 0.2f;
 
-					if (sliderObj.value <= 0)
+					if (sliderObj.value <= .2)
 					{
 						sliderObj.value = 0;
 						Schedule<PlayerDeath>();
