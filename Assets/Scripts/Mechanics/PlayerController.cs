@@ -15,6 +15,10 @@ namespace Platformer.Mechanics
     /// </summary>
     public class PlayerController : KinematicObject
     {
+
+        Rigidbody2D rb;
+        float originalGravity;
+
         private InputAction m_AttackAction;
         public AudioClip jumpAudio;
         public AudioClip respawnAudio;
@@ -56,6 +60,10 @@ namespace Platformer.Mechanics
 
         void Awake()
         {
+
+            rb = GetComponent<Rigidbody2D>();
+            originalGravity = rb.gravityScale;
+
             health = GetComponent<Health>();
             audioSource = GetComponent<AudioSource>();
             collider2d = GetComponent<Collider2D>();
@@ -77,10 +85,15 @@ namespace Platformer.Mechanics
         {
             if (controlEnabled)
             {
-                move.x = m_MoveAction.ReadValue<Vector2>().x;
-                if (jumpState == JumpState.Grounded && m_JumpAction.WasPressedThisFrame())
+                if (!isAttack)
+                    move.x = m_MoveAction.ReadValue<Vector2>().x;
+                else
+                    move = Vector2.zero;
+
+                // Jump logic
+                if (!isAttack && jumpState == JumpState.Grounded && m_JumpAction.WasPressedThisFrame())
                     jumpState = JumpState.PrepareToJump;
-                else if (m_JumpAction.WasReleasedThisFrame())
+                else if (!isAttack && m_JumpAction.WasReleasedThisFrame())
                 {
                     stopJump = true;
                     Schedule<PlayerStopJump>().player = this;
@@ -88,14 +101,17 @@ namespace Platformer.Mechanics
             }
             else
             {
-                move.x = 0;
+                move = Vector2.zero;
             }
             UpdateJumpState();
             base.Update();
             
-            if (m_AttackAction.WasPressedThisFrame())
+            if (controlEnabled && m_AttackAction.WasPressedThisFrame())
             {
-                Attack();
+                if (!isAttack && health != null && health.IsAlive)
+                {
+                    Attack();
+                }
             }
         }
 
@@ -133,10 +149,7 @@ namespace Platformer.Mechanics
 
         void Attack()
         {
-            if (!isAttack && health.IsAlive)
-            {
-                StartCoroutine(PerformAttack());
-            }
+            StartCoroutine(PerformAttack()); 
         }
 
         IEnumerator PerformAttack()
@@ -146,6 +159,8 @@ namespace Platformer.Mechanics
             animator.SetTrigger("attack");
             isAttack = true;
 
+            rb.linearVelocity = Vector2.zero;
+            rb.gravityScale = 0;
 
             Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
 
@@ -170,9 +185,14 @@ namespace Platformer.Mechanics
             }
 
 
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.01f);
+
 
             isAttack = false;
+            
+            rb.gravityScale = originalGravity;
+
+
         }
 
         void OnDrawGizmosSelected()
