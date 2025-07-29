@@ -1,4 +1,3 @@
-using UnityEngine;  // <-- Add this
 using Platformer.Core;
 using Platformer.Mechanics;
 
@@ -18,8 +17,6 @@ namespace Platformer.Gameplay
             enemy.control.enabled = false;
             if (enemy._audio && enemy.ouch)
                 enemy._audio.PlayOneShot(enemy.ouch);
-
-            GameObject.Destroy(enemy.gameObject);  // Now GameObject is recognized
         }
     }
 }

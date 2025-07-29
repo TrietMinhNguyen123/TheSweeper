@@ -20,8 +20,6 @@ namespace Platformer.Mechanics
         public AudioClip respawnAudio;
         public AudioClip ouchAudio;
 
-        private Vector3 attackPointOriginalLocalPos;
-
         /// <summary>
         /// Max horizontal speed of the player.
         /// </summary>
@@ -61,8 +59,6 @@ namespace Platformer.Mechanics
             collider2d = GetComponent<Collider2D>();
             spriteRenderer = GetComponent<SpriteRenderer>();
             animator = GetComponent<Animator>();
-            
-            attackPointOriginalLocalPos = attackPoint.localPosition;
 
             m_MoveAction = InputSystem.actions.FindAction("Player/Move");
             m_JumpAction = InputSystem.actions.FindAction("Player/Jump");
@@ -141,48 +137,15 @@ namespace Platformer.Mechanics
 
         IEnumerator PerformAttack()
         {
-
-            // Wait for animation length or fixed time
             isAttack = true;
             animator.SetTrigger("attack");
 
-
-            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
-
-            foreach (var hitCollider in hitEnemies)
-            {
-                // Only damage if tagged "Enemy"
-                if (!hitCollider.CompareTag("Enemy"))
-                    continue;
-
-                var enemyHealth = hitCollider.GetComponent<Health>();
-                if (enemyHealth != null)
-                {
-                    enemyHealth.Decrement();
-
-                    if (!enemyHealth.IsAlive)
-                    {
-                        var enemyController = hitCollider.GetComponent<EnemyController>();
-                        if (enemyController != null)
-                            Platformer.Core.Simulation.Schedule<Platformer.Gameplay.EnemyDeath>().enemy = enemyController;
-                    }
-                }
-            }
-
-
-            yield return new WaitForSeconds(0.1f);
+            // Wait for animation length or fixed time
+            yield return new WaitForSeconds(0.2f);
 
             isAttack = false;
         }
-
-        void OnDrawGizmosSelected()
-        {
-            if (attackPoint == null) return;
-
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-        }
-            
+    
 
         protected override void ComputeVelocity()
         {
@@ -200,23 +163,10 @@ namespace Platformer.Mechanics
                 }
             }
 
-            
             if (move.x > 0.01f)
-            {
                 spriteRenderer.flipX = false;
-                attackPoint.localPosition = attackPointOriginalLocalPos;
-            }
             else if (move.x < -0.01f)
-            {
                 spriteRenderer.flipX = true;
-                // Flip the x position to mirror the hitbox on the other side
-                attackPoint.localPosition = new Vector3(
-                    -attackPointOriginalLocalPos.x,
-                    attackPointOriginalLocalPos.y,
-                    attackPointOriginalLocalPos.z
-                );
-            }
-
 
             animator.SetBool("grounded", IsGrounded);
             animator.SetFloat("velocityX", Mathf.Abs(velocity.x) / maxSpeed);
@@ -224,7 +174,6 @@ namespace Platformer.Mechanics
             targetVelocity = move * maxSpeed;
 
         }
-
 
         public enum JumpState
         {
