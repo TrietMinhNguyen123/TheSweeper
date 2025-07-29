@@ -24,23 +24,10 @@ namespace Platformer.Gameplay
 
             if (willHurtEnemy)
             {
-                var enemyHealth = enemy.GetComponent<Health>();
-                if (enemyHealth != null)
+            var enemyHealth = enemy.GetComponent<Health>();
+                if (!enemyHealth.IsAlive)
                 {
-                    enemyHealth.Decrement();
-                    if (!enemyHealth.IsAlive)
-                    {
-                        Schedule<EnemyDeath>().enemy = enemy;
-                        player.Bounce(2);
-                    }
-                    else
-                    {
-                        player.Bounce(7);
-                    }
-                }
-                else
-                {
-                    Schedule<EnemyDeath>().enemy = enemy;
+
                     player.Bounce(2);
                 }
             }
