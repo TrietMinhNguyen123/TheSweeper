@@ -31,6 +31,21 @@ namespace Platformer.Gameplay
                     player.Bounce(2);
                 }
             }
+			else
+			{
+				var sliderObj = GameObject.Find("Health Bar")?.GetComponent<UnityEngine.UI.Slider>();
+				if (sliderObj != null)
+				{
+					sliderObj.value -= sliderObj.maxValue * 0.2f;
+
+					if (sliderObj.value <= .2)
+					{
+						sliderObj.value = 0;
+						Schedule<PlayerDeath>();
+					}
+				}
+			}
+
         }
     }
 }
