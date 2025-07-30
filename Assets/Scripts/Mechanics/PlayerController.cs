@@ -92,6 +92,7 @@ namespace Platformer.Mechanics
            m_AttackAction.Enable();
            m_MoveAction.Enable();
            m_JumpAction.Enable();
+
        }
 
 
@@ -99,10 +100,10 @@ namespace Platformer.Mechanics
        {
            if (controlEnabled)
            {
-               if (!isAttack)
-                   move.x = m_MoveAction.ReadValue<Vector2>().x;
-               else
+               if (isAttack)
                    move = Vector2.zero;
+               else
+                   move.x = m_MoveAction.ReadValue<Vector2>().x;
 
 
                // Jump logic
