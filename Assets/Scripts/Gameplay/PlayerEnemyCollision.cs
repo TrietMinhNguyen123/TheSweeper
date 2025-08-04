@@ -23,37 +23,40 @@ namespace Platformer.Gameplay
 
 
         public override void Execute()
-        {
-            var willHurtEnemy = player.Bounds.center.y >= enemy.Bounds.max.y;
-
-
-            if (willHurtEnemy)
             {
-            var enemyHealth = enemy.GetComponent<Health>();
-                if (!enemyHealth.IsAlive)
+                var willHurtEnemy = player.Bounds.center.y >= enemy.Bounds.max.y;
+
+                if (willHurtEnemy)
                 {
+                    var enemyHealth = enemy.GetComponent<Health>();
+                    if (!enemyHealth.IsAlive)
+                    {
+                        player.Bounce(2);
+                    }
+                    else
+                    {
+                        // Trigger the "hurt" animation
+                        var animator = enemy.GetComponent<Animator>();
+                        if (animator != null)
+                        {
+                            animator.SetTrigger("hurt");
+                        }
+                    }
+                }
+                else
+                {
+                    var sliderObj = GameObject.Find("Health Bar")?.GetComponent<UnityEngine.UI.Slider>();
+                    if (sliderObj != null)
+                    {
+                        sliderObj.value -= sliderObj.maxValue * 0.2f;
 
-
-                    player.Bounce(2);
+                        if (sliderObj.value <= .2)
+                        {
+                            sliderObj.value = 0;
+                            Schedule<PlayerDeath>();
+                        }
+                    }
                 }
             }
-			else
-			{
-				var sliderObj = GameObject.Find("Health Bar")?.GetComponent<UnityEngine.UI.Slider>();
-				if (sliderObj != null)
-				{
-					sliderObj.value -= sliderObj.maxValue * 0.2f;
-
-
-					if (sliderObj.value <= .2)
-					{
-						sliderObj.value = 0;
-						Schedule<PlayerDeath>();
-					}
-				}
-			}
-
-
-        }
     }
 }
