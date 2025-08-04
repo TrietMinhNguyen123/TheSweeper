@@ -1,10 +1,10 @@
 using Platformer.Core;
 using Platformer.Mechanics;
 using Platformer.Model;
+using UnityEngine.SceneManagement; // Required for scene loading
 
 namespace Platformer.Gameplay
 {
-
     /// <summary>
     /// This event is triggered when the player character enters a trigger with a VictoryZone component.
     /// </summary>
@@ -19,6 +19,9 @@ namespace Platformer.Gameplay
         {
             model.player.animator.SetTrigger("victory");
             model.player.controlEnabled = false;
+
+            // Optionally add a small delay here if you want the animation to play before switching scenes.
+            SceneManager.LoadScene("Win");
         }
     }
 }
