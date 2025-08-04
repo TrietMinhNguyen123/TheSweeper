@@ -3,6 +3,7 @@ using Platformer.Mechanics;
 using Platformer.Model;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 namespace Platformer.Gameplay
 {
@@ -15,6 +16,25 @@ namespace Platformer.Gameplay
 
         public override void Execute()
         {
+            // --- Heart GameObjects ---
+            GameObject[] hearts = new GameObject[]
+            {
+                GameObject.Find("Heart1"),
+                GameObject.Find("Heart2"),
+                GameObject.Find("Heart3")
+            };
+
+            // --- Check if all hearts are already gone ---
+			GameObject heart2 = GameObject.Find("Heart2");
+
+			if (heart2 == null || !heart2.activeSelf)
+			{
+				// Heart2 is gone
+				SceneManager.LoadScene("Defeat");
+				return;
+			}
+
+            // --- Normal respawn process ---
             var player = model.player;
             player.collider2d.enabled = true;
             player.controlEnabled = false;
@@ -37,13 +57,6 @@ namespace Platformer.Gameplay
             }
 
             // --- Remove one heart (from rightmost active) ---
-            GameObject[] hearts = new GameObject[]
-            {
-                GameObject.Find("Heart1"),
-                GameObject.Find("Heart2"),
-                GameObject.Find("Heart3")
-            };
-
             for (int i = hearts.Length - 1; i >= 0; i--)
             {
                 if (hearts[i] != null && hearts[i].activeSelf)
@@ -53,12 +66,11 @@ namespace Platformer.Gameplay
                 }
             }
 
-			// Re-enable player input after short delay
-			Simulation.Schedule<EnablePlayerInput>(2f);
+            // Re-enable player input after short delay
+            Simulation.Schedule<EnablePlayerInput>(2f);
 
-			// Reset death flag so player can die again
-			PlayerDeath.isProcessingDeath = false;
-
+            // Reset death flag so player can die again
+            PlayerDeath.isProcessingDeath = false;
         }
     }
 }
