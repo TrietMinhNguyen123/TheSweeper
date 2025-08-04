@@ -25,21 +25,14 @@ namespace Platformer.Gameplay
             };
 
             // --- Check if all hearts are already gone ---
-            bool allHeartsGone = true;
-            foreach (var heart in hearts)
-            {
-                if (heart != null && heart.activeSelf)
-                {
-                    allHeartsGone = false;
-                    break;
-                }
-            }
+			GameObject heart2 = GameObject.Find("Heart2");
 
-            if (allHeartsGone)
-            {
-                SceneManager.LoadScene("Defeat");
-                return;
-            }
+			if (heart2 == null || !heart2.activeSelf)
+			{
+				// Heart2 is gone
+				SceneManager.LoadScene("Defeat");
+				return;
+			}
 
             // --- Normal respawn process ---
             var player = model.player;
